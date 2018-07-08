@@ -27,11 +27,11 @@ public class JsonParser  {
 
 
 
-    public static List<Appointment> readJson(String jsonString) throws JSONException {
+    public static ArrayList<Appointment> readJson(String jsonString) throws JSONException {
 
 
         JSONArray jsonArray= new JSONArray(jsonString);
-        List<Appointment> array = new ArrayList<>();
+        ArrayList<Appointment> array = new ArrayList<>();
 
         for(int i=0;i<jsonArray.length();i++){
             JSONObject jAppointment = jsonArray.getJSONObject(i);

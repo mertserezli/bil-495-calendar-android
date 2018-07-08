@@ -2,8 +2,10 @@ package com.example.burak.calendarapplication;
 
 
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -20,6 +22,7 @@ import com.example.burak.calendarapplication.Request.JsonParser;
 
 import org.json.JSONException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,6 +30,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private ArrayList<Appointment> appointments;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(String string) {
                 try {
-                    List<Appointment> array= JsonParser.readJson(string);
+                    ArrayList<Appointment> array= JsonParser.readJson(string);
                     List<EventDay> events = new ArrayList<>();
                     for(Appointment appointment:array) {
                         Date date=appointment.getDate();
@@ -55,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
                         events.add(new EventDay(calendar, R.mipmap.ic_launcher));
                         calendarView.setEvents(events);
                     }
-
+                    //Button showAppointmentsButton =(Button)findViewById(R.id.showAppointments);
+                    appointments=array;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -77,5 +82,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+    public void showAppointments(View v){
+        Intent intent = new Intent(this,AppointmentsActivity.class);
 
+       // intent.putExtra("Appointments",appointments);
+        intent.putExtra("list", appointments);
+        startActivity(intent);
+    }
 }

@@ -1,17 +1,20 @@
 package com.example.burak.calendarapplication.Model;
 
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Burak on 23.06.2018.
  */
 
-public class Appointment {
+public class Appointment implements Serializable {
 
     private String id;
     private String description;
     private Date date;
-    private boolean recursive;
+    private boolean recursive=false;
     private Integer recurseDays;
     private Date createdAt;
     private Date updatedAt;

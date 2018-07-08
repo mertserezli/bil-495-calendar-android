@@ -11,5 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         ></com.applandeo.materialcalendarview.CalendarView>
+    <Button
+        android:id="@+id/showAppointments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Show Appointments"
+        app:layout_constraintBottom_toBottomOf="@+id/calendarView"
+        android:onClick="showAppointments"
+        />
+
 
 </android.support.constraint.ConstraintLayout>
