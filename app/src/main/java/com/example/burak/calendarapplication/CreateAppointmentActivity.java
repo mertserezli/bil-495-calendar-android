@@ -24,7 +24,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.burak.calendarapplication.Model.Appointment;
+import com.example.burak.calendarapplication.Model.EventAppointment;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -169,7 +171,7 @@ public class CreateAppointmentActivity extends AppCompatActivity {
             }
         });
         queue.add(jsonObjectRequest);
-
+        EventBus.getDefault().postSticky(new EventAppointment("delete",null));
     }
 
 

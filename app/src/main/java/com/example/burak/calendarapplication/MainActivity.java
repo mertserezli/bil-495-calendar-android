@@ -2,6 +2,7 @@ package com.example.burak.calendarapplication;
 
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,13 +17,15 @@ import com.android.volley.toolbox.Volley;
 import com.applandeo.materialcalendarview.CalendarView;
 import com.applandeo.materialcalendarview.EventDay;
 import com.applandeo.materialcalendarview.exceptions.OutOfDateRangeException;
-import com.applandeo.materialcalendarview.listeners.OnDayClickListener;
 import com.example.burak.calendarapplication.Model.Appointment;
+import com.example.burak.calendarapplication.Model.EventAppointment;
 import com.example.burak.calendarapplication.Request.JsonParser;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,12 +34,24 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Appointment> appointments;
+    private Context mContext;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mContext=getApplicationContext();
+        getAppointments();
 
+    }
+    public void showAppointments(View v){
+        Intent intent = new Intent(this,AppointmentsActivity.class);
 
+       // intent.putExtra("Appointments",appointments);
+        intent.putExtra("list", appointments);
+        startActivity(intent);
+    }
+
+    public void getAppointments(){
         final CalendarView calendarView = findViewById(R.id.calendarView);
         try {
             calendarView.setDate(new Date());
@@ -59,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
                         events.add(new EventDay(calendar, R.mipmap.ic_launcher));
                         calendarView.setEvents(events);
                     }
-                    //Button showAppointmentsButton =(Button)findViewById(R.id.showAppointments);
                     appointments=array;
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -74,19 +88,36 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         queue.add(request);
-        calendarView.setOnDayClickListener(new OnDayClickListener() {
-            @Override
-            public void onDayClick(EventDay eventDay) {
-
-            }
-        });
-
     }
-    public void showAppointments(View v){
-        Intent intent = new Intent(this,AppointmentsActivity.class);
+    @Override
+    public void onStart(){
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
 
-       // intent.putExtra("Appointments",appointments);
-        intent.putExtra("list", appointments);
-        startActivity(intent);
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onEvent(EventAppointment eventAppointment) {
+        String operation=eventAppointment.getOperation();
+        if(operation.equals("delete")){
+            getAppointments();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 }

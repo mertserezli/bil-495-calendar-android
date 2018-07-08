@@ -23,7 +23,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.burak.calendarapplication.Model.Appointment;
 import com.example.burak.calendarapplication.Model.AppointmentAdapter;
+import com.example.burak.calendarapplication.Model.EventAppointment;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,9 +36,9 @@ import java.util.ArrayList;
 public class AppointmentsActivity extends AppCompatActivity {
 
     Context mContext;
-    AppointmentAdapter appointmentAdapter;
-    String baseUrl="https://guarded-bayou-90785.herokuapp.com/appointments";
 
+    String baseUrl="https://guarded-bayou-90785.herokuapp.com/appointments";
+    ArrayList<Appointment> appointments=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +57,13 @@ public class AppointmentsActivity extends AppCompatActivity {
             }
         });
 
-        ArrayList<Appointment> appointments=null;
+
         Bundle extras = getIntent().getExtras();
         if(extras!=null){
             appointments=(ArrayList<Appointment>)extras.getSerializable("list");
         }
 
-        appointmentAdapter = new AppointmentAdapter(this,0,appointments);
+        final AppointmentAdapter appointmentAdapter = new AppointmentAdapter(this,0,appointments);
         final ListView listAppointments = (ListView)findViewById(R.id.listAppointments);
         listAppointments.setAdapter(appointmentAdapter);
 
@@ -96,6 +100,9 @@ public class AppointmentsActivity extends AppCompatActivity {
                                     }
                         });
                         queue.add(jsonObjectRequest);
+                        EventBus.getDefault().postSticky(new EventAppointment("delete",appointment));
+                        appointments.remove(position);
+                        appointmentAdapter.notifyDataSetChanged();
                     }
                 });
                 builder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
@@ -112,7 +119,35 @@ public class AppointmentsActivity extends AppCompatActivity {
 
     }
 
-    public void showDeleteDialog(View view){
+    public void createListView(){
 
+    }
+    @Override
+    public void onStart(){
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onEvent(EventAppointment eventAppointment) {
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 }
