@@ -55,6 +55,15 @@ public class AppointmentsActivity extends AppCompatActivity {
             }
         });
 
+        FloatingActionButton searchButton = (FloatingActionButton) findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext,SearchAppointmentActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         Bundle extras = getIntent().getExtras();
         if(extras!=null){
