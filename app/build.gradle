@@ -30,5 +30,5 @@ dependencies {
     compile 'com.applandeo:material-calendar-view:1.4.0'
     compile 'com.android.volley:volley:1.0.0'
     compile 'org.greenrobot:eventbus:3.0.0'
-
+    compile group: 'joda-time', name: 'joda-time', version: '2.10'
 }
